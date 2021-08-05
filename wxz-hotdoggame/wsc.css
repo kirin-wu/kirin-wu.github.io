@@ -1,0 +1,59 @@
+ body{
+     width: 100%;
+     height: 100%;
+     position: relative;
+     overflow: hidden;
+ }
+ /* 倒计时 */
+ .thelast{
+    width: 200px;
+    height: 80px;
+    line-height: 80px;
+    text-align: left;
+    font-size: 30px;
+}
+/* 开始 */
+.start{
+    width: 300px;
+    height: 200px;
+    border: solid 2px #000;
+    cursor:pointer;
+    position: absolute;
+    left: 35%;
+    top: 35%;
+    display: none;
+}
+.start p{
+    font-size: 40px;
+    margin-left: 30px;
+}
+.start button{
+    width: 100px;
+    height: 50px;
+    cursor:pointer;
+    margin-left: 90px;
+    margin-top: 10px;
+}
+/* 分数 */
+.data{
+    color: black;
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    display: inline-block;
+    font-size: 30px;
+}
+/* WSC */
+.wsc{
+    position: absolute;
+    left: 45%;
+    bottom: 20px;
+    cursor:pointer;
+}
+.wsc img{
+    width: 60px;
+    height: 65px;
+}
+.hotdogObj{
+    transition: linear 3s;
+}
