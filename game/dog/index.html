@@ -1,0 +1,183 @@
+<link rel="stylesheet" href="./wsc.css">
+<!-- 倒计时 -->
+<div class="thelast">
+    倒计时:
+</div>
+<!-- 开始 -->
+<div class="start">
+    <p>分数</p>
+    <button>replay</button>
+</div>
+<!-- 分数 -->
+<div class="data">0</div>
+<!-- 王思聪 -->
+<div class="wsc">
+    <img src="./images/sicong.jpg" alt="">
+</div>
+<script>
+//禁止选中图片
+if(document.all){
+       document.onselectstart= function(){return false;}; //for ie
+  }
+else{
+       document.onmousedown= function(){return false;};
+       document.onmouseup= function(){return true;};
+}
+ document.onselectstart = new Function('event.returnValue=false;');
+ 
+ //倒计时事件//全局变量
+ let wscX = 0
+ let score=0
+ let wscObj=document.querySelector('.wsc')
+ let wscY = (window.innerHeight||document.documentElement.clientHeight) - wscObj.offsetHeight
+ var lastObj=document.querySelector('.thelast')
+ var startObj=document.querySelector('.start')
+ let startpObj=document.querySelector('.start p')
+ var n =60
+ window.onload=function(){
+     data=0
+     createHotdog()
+     t=setInterval(function(){
+        n--
+        lastObj.innerText='倒计时:' +n+'S'
+        if(n==0){
+            clearInterval(t)
+            clearInterval(cxhotdog)
+            wscObj.onmousedown='null'
+            startObj.style.display='block'
+            startpObj.innerHTML='分数： '+score
+            document.onmousemove=null
+            n=60
+            return
+        }
+     },1000)
+ }
+ //重新开始计时事件
+ var stratBtnObj=document.querySelector('.start button')
+ let dataObj=document.querySelector('.data')
+ stratBtnObj.onclick=function(){
+     score=0
+     startObj.style.display='none'
+     dataObj.innerText='0'
+     createHotdog()
+     t=setInterval(function(){
+         n-=1
+         lastObj.innerText='倒计时:' +n+'S'
+         if(n==0){
+             clearInterval(t)
+             clearInterval(cxhotdog)
+             wscObj.onmousedown='null'
+             startObj.style.display='block'
+             startpObj.innerHTML='分数： '+score
+             document.onmousemove=null
+             n=60
+            return
+            }
+        },1000)
+    }
+//制造王思聪吃的热狗
+function createHotdog(){
+    cxhotdog=setInterval(function(){
+        let imgObj = document.createElement('img')
+        // 食物出现概率
+        var who =Math.floor(Math.random()*(9-0+1)+0) // 68-冠军,01234579-热狗
+        // 判断出现食物
+        if ([6,8].includes(who)){
+        imgObj.className = 'food guanjun'
+        imgObj.src = './images/cup.jpg'
+        imgObj.setAttribute('type', 'guanjun')
+        } 
+        else {
+        imgObj.className = 'food hotdog'
+        imgObj.src = './images/hotdog.jpg'
+        imgObj.setAttribute('type', 'hotdog')
+        }
+        //热狗大小 出现范围 追加到页面
+        imgObj.width='30'
+        imgObj.height='50'
+        if(imgObj.getAttribute('type')=='guanjun') {
+            imgObj.width='40'
+            imgObj.height='70'
+        }
+        imgObj.style.position='absolute'
+        var maxleft = (window.innerWidth ||window.document.documentElement.clientWidth)-imgObj.width
+        imgObj.style.top=0+'px'
+        imgObj.style.left=Math.floor(Math.random()*(maxleft-0+1)+0)
+        document.body.appendChild(imgObj)
+        
+    },500)
+}
+    
+    //王思聪按下移动
+    // let wscObj=document.querySelector('.wsc')
+    wscObj.onmouseover=function(){
+        document.onmousemove=function(evt){
+        var e =evt||window.event
+        var left =e.clientX
+        if(left<0){
+            left=0+wscObj.offsetWidth/2
+        }
+        var maxleft=(window.innerWidth||document.documentElement.clientWidth)-wscObj.offsetWidth/2
+        if(left>maxleft) {
+            left=maxleft
+        }
+        left =left-wscObj.offsetWidth/2
+        wscObj.style.left=left+'px'
+        wscX = left
+        }
+    }
+// 获取所有的食物下降
+    downhotdong=setInterval(function(){
+        let foodObjs=document.querySelectorAll('.food')
+        foodObjs.forEach(function(item,index){
+            let top=parseInt(item.style.top)+2
+            // console.log(top);
+            let maxtop=window.innerHeight||window.document.documentElement.clientHeight
+            if((top>maxtop)){
+                document.body.removeChild(item)
+                //注意在document.body.追加的子元素删除也要加body
+            }
+            else{
+                item.style.top=top+'px'
+            }
+            // 食物掉落判断是否在王公子范围内
+      //    公式x：  食物x > 王公子x  && 食物x < 王公子x+自身宽度
+      //    公式y：  食物y+自身高度 > 王公子y
+      //    符 合：【公式x、公式y】则分数+1
+            let foodX=parseInt(item.style.left)
+            let foodY=parseInt(item.style.top)+item.offsetHeight
+            if(foodX>wscX&&foodX<wscX+item.offsetWidth 
+                &&
+                foodY+item.offsetHeight>wscY
+            )
+            {
+                let type = item.getAttribute('type')
+                // score++
+                type == 'guanjun' ? score+=5 : score++
+                console.log(`食物坐标【${foodX},${foodY}】，王公子坐标【${wscX+wscObj.offsetWidth},${wscY+wscObj.offsetHeight}】，+1，总分【${score}}】`);
+                document.querySelector('.data').innerText = `${score}分`
+                document.body.removeChild(item) 
+                
+                // 提示 <div class="show-score">+1</div>
+                let divObj = document.createElement('div')
+                divObj.className = 'show-score'
+                divObj.innerText = type == 'guanjun' ? '+5' : '+1' 
+                divObj.style.position='absolute'
+                divObj.style.left = wscX+wscObj.offsetWidth + 'px'
+                divObj.style.bottom = wscObj.offsetHeight + 'px'
+                console.log(divObj.style.left,divObj.style.bottom);
+                document.body.appendChild(divObj)
+                setTimeout(() => document.body.removeChild(divObj), 1000)
+            }
+            
+
+        })
+    })
+    
+    let data=0
+    
+
+    
+        
+
+</script>
